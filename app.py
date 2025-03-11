@@ -1,14 +1,14 @@
-import re
-import streamlit as st
+import ast
 import os
+import re
+
 import pandas as pd
+import streamlit as st
 from dotenv import load_dotenv
+from langchain.chains import create_sql_query_chain
+from langchain.prompts import PromptTemplate
 from langchain_community.utilities import SQLDatabase
 from langchain_openai import ChatOpenAI
-from langchain.chains import create_sql_query_chain
-import ast
-from langchain.prompts import PromptTemplate
-
 
 # 讀取 .env 變數
 load_dotenv()
@@ -32,6 +32,7 @@ table_info = db.get_table_info()
 # 初始化 OpenAI 模型
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, api_key=OPENAI_API_KEY)
 
+
 # 讀取 `./prompts/` 內所有 `.txt` 檔案
 def load_context_from_folder(folder_path="./prompts"):
     context = ""
@@ -40,6 +41,7 @@ def load_context_from_folder(folder_path="./prompts"):
             with open(os.path.join(folder_path, filename), "r", encoding="utf-8") as file:
                 context += file.read() + "\n\n"
     return context.strip()
+
 
 # 讀取 Context
 context_text = load_context_from_folder()
@@ -85,6 +87,7 @@ with st.container():
 # 使用者輸入
 user_input = st.chat_input("請輸入您的問題...")
 
+
 def clean_sql_response(sql_query):
     """
     處理 LangChain 回傳的 SQL 查詢字串，移除前綴與雜訊。
@@ -97,32 +100,35 @@ def clean_sql_response(sql_query):
 
     return sql_query
 
+
 if user_input:
     # 儲存使用者訊息
-    st.session_state["messages"].append({"role": "user", "content": user_input})
+    st.session_state["messages"].append(
+        {"role": "user", "content": user_input})
 
     # 生成 SQL 查詢
     try:
         sql_query = chain.invoke({
-            "question": user_input, 
-            "table_info": table_info, 
-            "top_k": 20  
+            "question": user_input,
+            "table_info": table_info,
+            "top_k": 20
         })
 
         # 清理 SQL 查詢字串
         sql_query = clean_sql_response(sql_query)
 
-        st.session_state["messages"].append({"role": "assistant", "content": f"**生成的 SQL 查詢：**\n```sql\n{sql_query}\n```"})
+        st.session_state["messages"].append(
+            {"role": "assistant", "content": f"**生成的 SQL 查詢：**\n```sql\n{sql_query}\n```"})
 
         # 直接用 LangChain 內建的 db.run() 執行 SQL 查詢
         query_result = db.run(sql_query, include_columns=True)
 
         # 把 Decimal 轉成數字
         query_result = re.sub(r"Decimal\('([\d\.]+)'\)", r'\1', query_result)
-        
-        # 把 Date 轉成字串
-        query_result = re.sub(r"datetime\.date\((\d{4}), (\d{1,2}), (\d{1,2})\)", r'"\1-\2-\3"', query_result)
 
+        # 把 Date 轉成字串
+        query_result = re.sub(
+            r"datetime\.date\((\d{4}), (\d{1,2}), (\d{1,2})\)", r'"\1-\2-\3"', query_result)
 
         # 將字串轉換成 Object list
         parsed_result = ast.literal_eval(query_result)
@@ -135,13 +141,17 @@ if user_input:
 
         # 顯示查詢結果
         if not result_df.empty:
-            st.session_state["messages"].append({"role": "assistant", "content": "✅ 查詢成功，結果如下："})
-            st.session_state["messages"].append({"role": "table", "content": result_df})
+            st.session_state["messages"].append(
+                {"role": "assistant", "content": "✅ 查詢成功，結果如下："})
+            st.session_state["messages"].append(
+                {"role": "table", "content": result_df})
         else:
-            st.session_state["messages"].append({"role": "assistant", "content": "⚠️ 沒有查詢結果。"})
+            st.session_state["messages"].append(
+                {"role": "assistant", "content": "⚠️ 沒有查詢結果。"})
 
     except Exception as e:
-        st.session_state["messages"].append({"role": "assistant", "content": f"❌ 發生錯誤：{e}"})
+        st.session_state["messages"].append(
+            {"role": "assistant", "content": f"❌ 發生錯誤：{e}"})
 
     # 重新載入畫面
     st.rerun()

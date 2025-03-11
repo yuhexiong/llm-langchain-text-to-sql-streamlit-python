@@ -1,12 +1,13 @@
-import re
+import ast
 import os
+import re
+
 import pandas as pd
 from dotenv import load_dotenv
+from langchain.chains import create_sql_query_chain
+from langchain.prompts import PromptTemplate
 from langchain_community.utilities import SQLDatabase
 from langchain_openai import ChatOpenAI
-from langchain.chains import create_sql_query_chain
-import ast
-from langchain.prompts import PromptTemplate
 
 # 讀取 .env 變數
 load_dotenv()
@@ -39,6 +40,7 @@ def load_context_from_folder(folder_path="./prompts"):
                 context += file.read() + "\n\n"
     return context.strip()
 
+
 # 讀取 Context
 context_text = load_context_from_folder()
 
@@ -60,6 +62,7 @@ prompt = PromptTemplate.from_template(
 # 創建 SQL 查詢鏈
 chain = create_sql_query_chain(llm, db, prompt=prompt)
 
+
 # 處理 SQL 查詢字串
 def clean_sql_response(sql_query):
     """
@@ -72,6 +75,7 @@ def clean_sql_response(sql_query):
     sql_query = sql_query.replace("```sql", "").replace("```", "").strip()
 
     return sql_query
+
 
 # 使用者輸入問題
 user_input = input("請輸入您的問題：")
