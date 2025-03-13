@@ -1,5 +1,8 @@
 # GPT LangChain Text To SQL Prompt Streamlit
 
+**(also provided Traditional Chinese version document [README-CH.md](README-CH.md).)**
+
+
 Use LangChain to integrate with OpenAI and connect to the database, enabling the AI to understand the database structure, optimize prompts, achieve Text-to-SQL, and build an interactive frontend web page with Streamlit.
 
 ## Overview
