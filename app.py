@@ -3,12 +3,11 @@ import os
 import streamlit as st
 from dotenv import load_dotenv
 from langchain.chains import create_sql_query_chain
-from langchain.prompts import PromptTemplate
 from langchain_community.utilities import SQLDatabase
-from langchain_ollama.chat_models import ChatOllama
-from langchain_openai import ChatOpenAI
 
-from util import clean_sql_response, convert_result_to_df
+from llm_util import get_llm
+from prompt_util import get_prompt
+from sql_util import clean_sql_response, convert_result_to_df
 
 # 讀取 .env 變數
 load_dotenv()
@@ -28,62 +27,10 @@ db = SQLDatabase.from_uri(DB_URL)
 table_info = db.get_table_info()
 
 # 初始化 LLM 模型
-LLM_TYPE = os.getenv("LLM_TYPE", "OPENAI")  # 默認為 OPENAI
-llm = None
+llm = get_llm()
 
-if LLM_TYPE == "OPENAI":
-    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-    OPENAI_MODEL = os.getenv("OPENAI_MODEL")
-
-    if not OPENAI_API_KEY:
-        raise Exception("未在 .env 檔案中找到 OPENAI_API_KEY。")
-    if not OPENAI_MODEL:
-        raise Exception("未在 .env 檔案中找到 OPENAI_MODEL")
-
-    llm = ChatOpenAI(model=OPENAI_MODEL, temperature=0, api_key=OPENAI_API_KEY)
-
-elif LLM_TYPE == "OLLAMA":
-    OLLAMA_URL = os.getenv("OLLAMA_URL")
-    OLLAMA_MODEL = os.getenv("OLLAMA_MODEL")
-
-    if not OLLAMA_URL:
-        raise Exception("未在 .env 檔案中找到 OLLAMA_URL")
-    if not OLLAMA_MODEL:
-        raise Exception("未在 .env 檔案中找到 OLLAMA_MODEL")
-
-    llm = ChatOllama(model=OLLAMA_MODEL, base_url=OLLAMA_URL)
-
-else:
-    raise Exception(f"未支援的 LLM_TYPE: {LLM_TYPE}")
-
-
-# 讀取 `./prompts/` 內所有 `.txt` 檔案
-def load_context_from_folder(folder_path="./prompts"):
-    context = ""
-    for filename in os.listdir(folder_path):
-        if filename.endswith(".txt"):
-            with open(os.path.join(folder_path, filename), "r", encoding="utf-8") as file:
-                context += file.read() + "\n\n"
-    return context.strip()
-
-
-# 讀取 Context
-context_text = load_context_from_folder()
-
-# 自訂 Prompt，包含 `context_text`
-prompt = PromptTemplate.from_template(
-    f"""
-    {context_text}
-    
-    你是一個 SQL 生成器，請基於以下的 `table_info` 資訊生成一個 SQL 查詢：
-    
-    - `table_info`: {{table_info}}
-    - 使用者的問題: {{input}}
-    - 每次獲取資料數量: {{top_k}}
-
-    請輸出完整的 SQL 查詢，不要包含任何解釋文字。
-    """
-)
+# 自訂 Prompt
+prompt = get_prompt()
 
 # 創建 SQL 查詢鏈
 chain = create_sql_query_chain(llm, db, prompt=prompt)
@@ -128,7 +75,8 @@ if user_input:
         except Exception as e:
             if retry < MAX_RETRIES:
                 with st.chat_message("assistant"):
-                    st.markdown(f"⚠️ SQL 執行失敗：`{sql_query}`，正在重新嘗試 ({retry}/{MAX_RETRIES})...")
+                    st.markdown(
+                        f"⚠️ SQL 執行失敗：`{sql_query}`，正在重新嘗試 ({retry}/{MAX_RETRIES})...")
             else:
                 with st.chat_message("assistant"):
                     st.markdown(f"❌ SQL 執行失敗：{e}")

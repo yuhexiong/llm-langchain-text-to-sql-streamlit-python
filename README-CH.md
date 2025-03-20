@@ -29,7 +29,7 @@ DB_URL='postgresql://user:password@host:5432/database'
 
 ### Prerequisites
 
-將你的提示語檔案放置在 `prompts` 目錄中。已經提供了一些範本。
+根據你的資料庫資訊修改程式碼中的 prompt。已經提供了一些範本。
 
 
 

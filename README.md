@@ -1,4 +1,4 @@
-# GPT LangChain Text To SQL Prompt Streamlit
+# LLM LangChain Text To SQL Prompt Streamlit
 
 **(also provided Traditional Chinese version document [README-CH.md](README-CH.md).)**
 
@@ -12,6 +12,7 @@ Use LangChain to integrate with OpenAI or Ollama and connect to the database, en
 ## Env
 
 Able to choose OpenAI or Ollama as the LLM, and set the environment variables for the selected LLM. If using OpenAI, an API key must be obtained from [OpenAI](https://platform.openai.com/) (a paid subscription may be required).
+
 ```
 # OPENAI or OLLAMA
 LLM_TYPE='OLLAMA'
@@ -29,7 +30,7 @@ DB_URL='postgresql://user:password@host:5432/database'
 
 ### Prerequisites
 
-Place your prompt notes in the `prompts` directory. Some samples are already provided.
+Modify the prompt in the code based on your database information. Some templates have already been provided.  
 
 ### Install Module
 

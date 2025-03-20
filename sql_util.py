@@ -4,7 +4,7 @@ import pandas as pd
 
 
 
-def clean_sql_response(sql_query):
+def clean_sql_response(sql_query: str) -> str:
     """
     處理 LangChain 回傳的 SQL 查詢字串，移除前綴與雜訊。
     """
@@ -18,7 +18,7 @@ def clean_sql_response(sql_query):
 
 
 
-def convert_result_to_df(query_result) -> pd.DataFrame:
+def convert_result_to_df(query_result: None | str) -> pd.DataFrame:
     """
     轉換 LangChain 回傳的 SQL 查詢結果為 pandas DataFrame。
     """
@@ -32,6 +32,15 @@ def convert_result_to_df(query_result) -> pd.DataFrame:
     # 把 Date 轉成字串
     query_result = re.sub(
         r"datetime\.date\((\d{4}), (\d{1,2}), (\d{1,2})\)", r'"\1-\2-\3"', query_result)
+
+    # 把 DataTime 轉成字串
+    query_result = re.sub(
+        r"datetime\.datetime\((\d{4}), (\d{1,2}), (\d{1,2}), (\d{1,2}), (\d{1,2}), (\d{1,2}), tzinfo=datetime.timezone.utc\)", 
+        r'"\1-\2-\3 \4:\5:\6"', query_result)
+
+    query_result = re.sub(
+        r"datetime\.datetime\((\d{4}), (\d{1,2}), (\d{1,2}), (\d{1,2}), (\d{1,2}), tzinfo=datetime.timezone.utc\)", 
+        r'"\1-\2-\3 \4:\5:00"', query_result)
 
     # 將字串轉換成 Object list
     parsed_result = ast.literal_eval(query_result)
