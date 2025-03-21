@@ -29,6 +29,9 @@ def convert_result_to_df(query_result: None | str) -> pd.DataFrame:
     # 把 Decimal 轉成數字
     query_result = re.sub(r"Decimal\('([\d\.]+)'\)", r'\1', query_result)
 
+    # 把 Decimal 轉成數字 (處理科學記號的情況)
+    query_result = re.sub(r"Decimal\('([-+]?\d*\.?\d+([eE][-+]?\d+)?)'\)", lambda m: str(float(m.group(1))), query_result)
+
     # 把 Date 轉成字串
     query_result = re.sub(
         r"datetime\.date\((\d{4}), (\d{1,2}), (\d{1,2})\)", r'"\1-\2-\3"', query_result)

@@ -7,6 +7,7 @@ from langchain_community.utilities import SQLDatabase
 
 from llm_util import get_llm
 from prompt_util import get_prompt
+from rag_util import get_vector_store, run_rag
 from sql_util import clean_sql_response, convert_result_to_df
 
 # 讀取 .env 變數
@@ -23,17 +24,14 @@ MAX_RETRIES = 3  # 最多重試次數
 # 連接資料庫
 db = SQLDatabase.from_uri(DB_URL)
 
-# 取得 `table_info`
+# 取得資料庫資訊
 table_info = db.get_table_info()
 
 # 初始化 LLM 模型
 llm = get_llm()
 
-# 自訂 Prompt
-prompt = get_prompt()
-
-# 創建 SQL 查詢鏈
-chain = create_sql_query_chain(llm, db, prompt=prompt)
+# 初始化 向量資料庫
+vector_store = get_vector_store()
 
 # Streamlit 頁面設定
 st.set_page_config(page_title="SQL 查詢生成器", page_icon="💬", layout="wide")
@@ -57,11 +55,7 @@ if user_input:
     for retry in range(1, MAX_RETRIES + 1):
         try:
             # 生成 SQL 查詢
-            sql_query = chain.invoke({
-                "question": user_input,
-                "table_info": table_info,
-                "top_k": 20
-            })
+            sql_query = run_rag(llm, vector_store, user_input, table_info)
 
             # 清理 SQL 查詢字串
             sql_query = clean_sql_response(sql_query)
