@@ -14,15 +14,20 @@ Use LangChain to integrate with OpenAI or Ollama and connect to the database, en
 Able to choose OpenAI or Ollama as the LLM, and set the environment variables for the selected LLM. If using OpenAI, an API key must be obtained from [OpenAI](https://platform.openai.com/) (a paid subscription may be required).
 
 ```
-# OPENAI or OLLAMA
+# LLM OPENAI or OLLAMA
 LLM_TYPE='OLLAMA'
 
 OPENAI_MODEL='gpt-4o-mini'
 OPENAI_API_KEY=''
 
 OLLAMA_URL='http://localhost:11434'
-OLLAMA_MODEL='llama3.1:70b-instruct-q2_K'
+OLLAMA_MODEL='gemma3:27b'
 
+# Embedding
+OLLAMA_EMBEDDING_URL='http://localhost:11434'
+OLLAMA_EMBEDDING_MODEL='llama3.1:70b-instruct-q2_K'
+
+# Database
 DB_URL='postgresql://user:password@host:5432/database'
 ```
 

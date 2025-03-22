@@ -13,15 +13,20 @@
 可以選擇 OpenAI 或 Ollama 作為 LLM，並設置所選擇 LLM 的環境變數。如果使用 OpenAI，則需要從 [OpenAI](https://platform.openai.com/) 獲取 API 金鑰（可能需要付費訂閱）。
 
 ```
-# OPENAI 或 OLLAMA
+# LLM OPENAI or OLLAMA
 LLM_TYPE='OLLAMA'
 
 OPENAI_MODEL='gpt-4o-mini'
 OPENAI_API_KEY=''
 
 OLLAMA_URL='http://localhost:11434'
-OLLAMA_MODEL='llama3.1:70b-instruct-q2_K'
+OLLAMA_MODEL='gemma3:27b'
 
+# Embedding
+OLLAMA_EMBEDDING_URL='http://localhost:11434'
+OLLAMA_EMBEDDING_MODEL='llama3.1:70b-instruct-q2_K'
+
+# Database
 DB_URL='postgresql://user:password@host:5432/database'
 ```
 

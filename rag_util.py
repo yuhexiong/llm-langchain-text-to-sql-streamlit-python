@@ -20,12 +20,16 @@ from prompt_util import get_prompt
 # 讀取 .env 變數
 load_dotenv()
 
-
 def get_vector_store():
     # embedding
-    # TODO: 環境變數讀取
-    OLLAMA_URL = os.getenv("OLLAMA_URL")
-    embeddings = OllamaEmbeddings(model="llama3.1:70b-instruct-q2_K", base_url=OLLAMA_URL)
+    OLLAMA_EMBEDDING_URL = os.getenv("OLLAMA_EMBEDDING_URL")
+    if not OLLAMA_EMBEDDING_URL:
+        raise Exception("未在 .env 檔案中找到 OLLAMA_EMBEDDING_URL。")
+    OLLAMA_EMBEDDING_MODEL = os.getenv("OLLAMA_EMBEDDING_MODEL")
+    if not OLLAMA_EMBEDDING_MODEL:
+        raise Exception("未在 .env 檔案中找到 OLLAMA_EMBEDDING_MODEL。")
+
+    embeddings = OllamaEmbeddings(model=OLLAMA_EMBEDDING_MODEL, base_url=OLLAMA_EMBEDDING_URL)
 
     vector_store = InMemoryVectorStore(embeddings)
 
