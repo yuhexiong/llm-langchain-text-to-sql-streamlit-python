@@ -1,4 +1,4 @@
-# GPT LangChain Text To SQL Prompt Streamlit
+# LLM LangChain Text To SQL Streamlit
 
 使用 LangChain 串接 OpenAI 或 Ollama 並連接資料庫，讓 AI 瞭解資料庫結構、優化提示詞、實現 Text-to-SQL，並使用 Streamlit 建立互動式前端網頁。  
 

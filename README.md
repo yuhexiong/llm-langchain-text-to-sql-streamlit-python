@@ -1,4 +1,4 @@
-# LLM LangChain Text To SQL Prompt Streamlit
+# LLM LangChain Text To SQL Streamlit
 
 **(also provided Traditional Chinese version document [README-CH.md](README-CH.md).)**
 
