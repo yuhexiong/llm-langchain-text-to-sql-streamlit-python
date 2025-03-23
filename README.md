@@ -3,7 +3,7 @@
 **(also provided Traditional Chinese version document [README-CH.md](README-CH.md).)**
 
 
-Use LangChain to integrate with OpenAI or Ollama and connect to the database, enabling the AI to understand the database structure, optimize prompts, achieve Text-to-SQL, and build an interactive frontend web page with Streamlit.
+Use LangChain to integrate with OpenAI or Ollama and connect to a database, enabling the AI to understand the database structure, enhance prompts with Retrieval-Augmented Generation (RAG), achieve Text-to-SQL, and build an interactive frontend web page with Streamlit.  
 
 ## Overview
 - Module: langchain-community v0.3.19, langchain-openai v0.3.7, langchain v0.3.20, langchain-ollama v0.2.3
@@ -11,7 +11,7 @@ Use LangChain to integrate with OpenAI or Ollama and connect to the database, en
 
 ## Env
 
-Able to choose OpenAI or Ollama as the LLM, and set the environment variables for the selected LLM. If using OpenAI, an API key must be obtained from [OpenAI](https://platform.openai.com/) (a paid subscription may be required).
+Able to choose OpenAI or Ollama as the LLM and set the environment variables for the selected LLM. If using OpenAI, an API key must be obtained from [OpenAI](https://platform.openai.com/) (a paid subscription may be required). Additionally, the embedding model used for RAG can be different from the selected LLM.  
 
 ```
 # LLM OPENAI or OLLAMA

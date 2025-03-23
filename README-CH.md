@@ -1,6 +1,6 @@
 # LLM LangChain Text To SQL Streamlit
 
-使用 LangChain 串接 OpenAI 或 Ollama 並連接資料庫，讓 AI 瞭解資料庫結構、優化提示詞、實現 Text-to-SQL，並使用 Streamlit 建立互動式前端網頁。  
+使用 LangChain 串接 OpenAI 或 Ollama 並連接資料庫，讓 AI 瞭解資料庫結構、使用檢索增強生成優化提示詞、實現 Text-to-SQL，並使用 Streamlit 建立互動式前端網頁。  
 
 
 ## Overview
@@ -10,7 +10,7 @@
 
 ## Env
 
-可以選擇 OpenAI 或 Ollama 作為 LLM，並設置所選擇 LLM 的環境變數。如果使用 OpenAI，則需要從 [OpenAI](https://platform.openai.com/) 獲取 API 金鑰（可能需要付費訂閱）。
+可以選擇 OpenAI 或 Ollama 作為 LLM，並設置所選擇 LLM 的環境變數。如果使用 OpenAI，則需要從 [OpenAI](https://platform.openai.com/) 獲取 API 金鑰（可能需要付費訂閱）。並且設定 RAG 所使用 Embedding 模型，可以和 LLM 不相同。
 
 ```
 # LLM OPENAI or OLLAMA
