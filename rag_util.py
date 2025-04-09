@@ -1,16 +1,9 @@
-import ast
 import json
 import os
-import re
 
 from langchain_ollama import OllamaEmbeddings
-import pandas as pd
-import streamlit as st
 from dotenv import load_dotenv
-import matplotlib
-import matplotlib.pyplot as plt
 from langchain_community.document_loaders import DirectoryLoader
-from langchain.prompts import PromptTemplate
 from langchain_core.documents import Document
 from langchain_core.vectorstores import InMemoryVectorStore
 
@@ -52,7 +45,7 @@ def get_vector_store():
     return vector_store
 
 
-def run_rag(llm, vector_store, user_input, table_info):
+def run_rag(llm, vector_store, user_input, table_info, memory):
     """
     執行 RAG 流程，先檢索相似內容，再生成 SQL 查詢
     """
@@ -70,13 +63,22 @@ def run_rag(llm, vector_store, user_input, table_info):
         回答: `{best_match.metadata["response"]}`
     """ if best_match else None
 
-    prompt = get_prompt(example)
+    # 整理記憶
+    memory_str = ""
+    if memory:
+        for item in memory:
+            memory_str += f"""
+                SQL： {item['sql']}
+                錯誤訊息：`{item['error']}`
+            """
+
+
+    prompt = get_prompt(example, memory_str)
 
     # 產生 SQL 查詢
     messages = prompt.invoke({
         "input": user_input, 
         "table_info": table_info,
-        "example": example,
         "top_k": 20
     })
     

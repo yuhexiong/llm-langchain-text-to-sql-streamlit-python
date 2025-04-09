@@ -6,7 +6,6 @@ from langchain.chains import create_sql_query_chain
 from langchain_community.utilities import SQLDatabase
 
 from llm_util import get_llm
-from prompt_util import get_prompt
 from rag_util import get_vector_store, run_rag
 from sql_util import clean_sql_response, convert_result_to_df
 
@@ -51,11 +50,12 @@ if user_input:
 
     sql_query = None
     query_result = None
+    memory = []
 
     for retry in range(1, MAX_RETRIES + 1):
         try:
             # 生成 SQL 查詢
-            sql_query = run_rag(llm, vector_store, user_input, table_info)
+            sql_query = run_rag(llm, vector_store, user_input, table_info, memory)
 
             # 清理 SQL 查詢字串
             sql_query = clean_sql_response(sql_query)
@@ -67,18 +67,28 @@ if user_input:
             break
 
         except Exception as e:
+            error_message = str(e)
+            memory.append({
+                "sql": sql_query,
+                "error": error_message,
+            })
+
             if retry < MAX_RETRIES:
                 with st.chat_message("assistant"):
                     st.markdown(
-                        f"⚠️ SQL 執行失敗：`{sql_query}`，正在重新嘗試 ({retry}/{MAX_RETRIES})...")
+                        f"❌ SQL 執行失敗：\n```sql\n{sql_query}\n```\n"
+                        f"❗ 錯誤訊息：`{error_message}`，正在重新嘗試 ({retry}/{MAX_RETRIES})...")
             else:
                 with st.chat_message("assistant"):
-                    st.markdown(f"❌ SQL 執行失敗：{e}")
+                    st.markdown(
+                        f"❌ SQL 執行失敗：\n```sql\n{sql_query}\n```\n"
+                        f"❗ 錯誤訊息：`{error_message}`")
 
                 # 移除錯誤的 SQL 語法
                 sql_query = None
                 break
 
+    # 順利產生 sql 後嘗試執行
     if sql_query:
 
         with st.chat_message("assistant"):
