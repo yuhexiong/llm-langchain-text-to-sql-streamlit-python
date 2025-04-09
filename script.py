@@ -4,9 +4,9 @@ from dotenv import load_dotenv
 from langchain.chains import create_sql_query_chain
 from langchain_community.utilities import SQLDatabase
 
-from llm_util import get_llm
-from prompt_util import get_prompt
-from sql_util import clean_sql_response, convert_result_to_df
+from utils.llm_util import get_llm
+from utils.prompt_util import get_prompt
+from utils.sql_util import clean_sql_response, convert_result_to_df
 
 # 讀取 .env 變數
 load_dotenv()

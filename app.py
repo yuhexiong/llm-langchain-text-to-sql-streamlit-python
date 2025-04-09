@@ -1,22 +1,13 @@
-import os
+from config import DB_URL
 
 import streamlit as st
-from dotenv import load_dotenv
 from langchain.chains import create_sql_query_chain
 from langchain_community.utilities import SQLDatabase
 
-from llm_util import get_llm
-from rag_util import get_vector_store, run_rag
-from sql_util import clean_sql_response, convert_result_to_df
+from utils.llm_util import get_llm
+from utils.rag_util import get_vector_store, run_rag
+from utils.sql_util import clean_sql_response, convert_result_to_df
 
-# 讀取 .env 變數
-load_dotenv()
-
-
-# 取得資料庫連線字串
-DB_URL = os.getenv("DB_URL")
-if not DB_URL:
-    raise Exception("未在 .env 檔案中找到 DB_URL")
 
 MAX_RETRIES = 3  # 最多重試次數
 
@@ -43,7 +34,6 @@ st.title("SQL 查詢生成器 💬")
 user_input = st.chat_input("請輸入您的問題...")
 
 if user_input:
-
     # 顯示使用者輸入
     with st.chat_message("user"):
         st.markdown(user_input)
@@ -52,6 +42,7 @@ if user_input:
     query_result = None
     memory = []
 
+    # 嘗試 MAX_RETRIES 次
     for retry in range(1, MAX_RETRIES + 1):
         try:
             # 生成 SQL 查詢
@@ -67,12 +58,16 @@ if user_input:
             break
 
         except Exception as e:
+            # 將錯誤轉為字串
             error_message = str(e)
+
+            # 記錄錯誤到 memory 中已供下次使用
             memory.append({
                 "sql": sql_query,
                 "error": error_message,
             })
 
+            # 顯示在 Streamlit 上
             if retry < MAX_RETRIES:
                 with st.chat_message("assistant"):
                     st.markdown(
@@ -90,7 +85,7 @@ if user_input:
 
     # 順利產生 sql 後嘗試執行
     if sql_query:
-
+        # 顯示在 Streamlit 上
         with st.chat_message("assistant"):
             st.markdown(f"**生成的 SQL 查詢：**\n```sql\n{sql_query}\n```")
 
@@ -105,9 +100,11 @@ if user_input:
                 with st.chat_message("table"):
                     st.dataframe(result_df)
             else:
+                # 沒有資料
                 with st.chat_message("table"):
                     st.markdown(f"⚠️ 沒有查詢結果。")
 
+        # 轉換錯誤
         except Exception as e:
             with st.chat_message("table"):
                 st.markdown(f"❌ 結果處理錯誤：{e}")

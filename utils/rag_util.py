@@ -1,27 +1,15 @@
-import json
-import os
+from config import OLLAMA_EMBEDDING_MODEL, OLLAMA_EMBEDDING_URL
 
+import json
 from langchain_ollama import OllamaEmbeddings
-from dotenv import load_dotenv
 from langchain_community.document_loaders import DirectoryLoader
 from langchain_core.documents import Document
 from langchain_core.vectorstores import InMemoryVectorStore
 
-from prompt_util import get_prompt
+from utils.prompt_util import get_prompt
 
-
-# 讀取 .env 變數
-load_dotenv()
 
 def get_vector_store():
-    # embedding
-    OLLAMA_EMBEDDING_URL = os.getenv("OLLAMA_EMBEDDING_URL")
-    if not OLLAMA_EMBEDDING_URL:
-        raise Exception("未在 .env 檔案中找到 OLLAMA_EMBEDDING_URL。")
-    OLLAMA_EMBEDDING_MODEL = os.getenv("OLLAMA_EMBEDDING_MODEL")
-    if not OLLAMA_EMBEDDING_MODEL:
-        raise Exception("未在 .env 檔案中找到 OLLAMA_EMBEDDING_MODEL。")
-
     embeddings = OllamaEmbeddings(model=OLLAMA_EMBEDDING_MODEL, base_url=OLLAMA_EMBEDDING_URL)
 
     vector_store = InMemoryVectorStore(embeddings)
