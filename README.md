@@ -40,9 +40,7 @@ Modify the prompt in the code based on your database information. Some templates
 ### Install Module
 
 ```bash
-pip install streamlit==1.42.2 pandas==2.2.3 python-dotenv==1.0.1 \
-langchain-community==0.3.19 langchain-openai==0.3.7 langchain==0.3.20 \
-langchain-ollama==0.2.3 python-magic-bin==0.4.14
+pip install -r requirements.txt
 ```
 
 

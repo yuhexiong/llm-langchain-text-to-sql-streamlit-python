@@ -5,7 +5,7 @@ from langchain.chains import create_sql_query_chain
 from langchain_community.utilities import SQLDatabase
 
 from utils.llm_util import get_llm
-from utils.prompt_util import get_prompt
+from utils.prompt_util import get_sql_prompt
 from utils.sql_util import clean_sql_response, convert_result_to_df
 
 # 讀取 .env 變數
@@ -32,7 +32,7 @@ table_info = db.get_table_info()
 llm = get_llm()
 
 # 自訂 Prompt
-prompt = get_prompt()
+prompt = get_sql_prompt()
 
 # 創建 SQL 查詢鏈
 chain = create_sql_query_chain(llm, db, prompt=prompt)

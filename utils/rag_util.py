@@ -6,7 +6,7 @@ from langchain_community.document_loaders import DirectoryLoader
 from langchain_core.documents import Document
 from langchain_core.vectorstores import InMemoryVectorStore
 
-from utils.prompt_util import get_prompt
+from utils.prompt_util import get_sql_prompt
 
 
 def get_vector_store():
@@ -61,7 +61,7 @@ def run_rag(llm, vector_store, user_input, table_info, memory):
             """
 
 
-    prompt = get_prompt(example, memory_str)
+    prompt = get_sql_prompt(example, memory_str)
 
     # 產生 SQL 查詢
     messages = prompt.invoke({

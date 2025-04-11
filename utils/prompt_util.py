@@ -2,7 +2,7 @@ from langchain.prompts import PromptTemplate
 
 
 
-def get_prompt(example: str | None, memory: str | None):
+def get_sql_prompt(example: str | None, memory: str | None):
     """
     自訂產生 SQL 的 Prompt
     """
